@@ -1,0 +1,9 @@
+version: '3'
+services:
+  php:
+    build: .
+    container_name: api_test
+    volumes:
+      - .:/var/www
+    ports:
+      - 8080:8080
