@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -11,21 +12,54 @@ class UsersController extends Controller
     {
         $users = User::all();
 
-        return response()->json($users->toArray());
+        return response()->json([
+            'status' => true,
+            'users' => $users->toArray()
+        ]);
     }
 
     public function postUsers(Request $request)
     {
+        try {
+            $user = new User($request->post());
+            $user->saveOrFail();
 
+            return response()->json(['status' => true]);
+        } catch (\Exception $exception) {
+            return response()->json(['status' => false]);
+        }
     }
 
-    public function getUsersById(Request $request)
+    public function getUsersById(Request $request, $user_id)
     {
+        try {
+            $user = User::findOrFail($user_id);
 
+            return response()->json([
+                'user' => $user->toArray(),
+                'status' => true
+            ]);
+        } catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'status' => false
+            ]);
+        }
     }
 
-    public function putUsersById(Request $request)
+    public function putUsersById(Request $request, $user_id)
     {
+        try {
+            /** @var User $user */
+            $user = User::findOrFail($user_id);
+            $user->save($request->post());
 
+            return response()->json([
+                'status' => true
+            ]);
+        } catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'status' => false
+            ]);
+        }
     }
 }

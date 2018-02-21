@@ -13,12 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 //UsersController
-Route::get('users', function () {
-    return view('welcome');
-});
+Route::get('/users', 'UsersController@getUsers');
 Route::post('/users', 'UsersController@postUsers');
 Route::get('/users/{id}', 'UsersController@getUsersById')->where(['id' => '[0-9]+']);
-Route::put('/users{id}', 'UsersController@putUsers')->where(['id' => '[0-9]+']);
+Route::put('/users/{id}', 'UsersController@putUsersById')->where(['id' => '[0-9]+']);
 
 //GroupsController
 /*Route::get('/groups', 'GroupsController@getGroups');
