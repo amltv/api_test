@@ -26,7 +26,7 @@ class UsersController extends Controller
             $user->saveOrFail();
 
             return response()->json(['status' => true]);
-        } catch (\Exception $exception) {
+        } catch (QueryException $exception) {
             return response()->json(['status' => false]);
         }
     }

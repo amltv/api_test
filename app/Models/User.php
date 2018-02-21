@@ -18,7 +18,8 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'email',
-        'state'
+        'state',
+        'group_id'
     ];
 
     /**
@@ -27,4 +28,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [];
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
 }

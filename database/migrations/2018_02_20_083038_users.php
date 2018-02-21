@@ -18,6 +18,10 @@ class Users extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
+            $table->integer('group_id')->unsigned();
+            $table->foreign('group_id')->references('id')
+                ->on('groups')->onDelete('cascade');
+
             $table->boolean('state');
             $table->timestamps();
         });

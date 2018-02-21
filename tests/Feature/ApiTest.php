@@ -14,8 +14,9 @@ class ApiTest extends TestCase
 
     public function testFetchListOfUsers()
     {
+        $group = factory(Group::class)->create();
         /** @var Collection $users */
-        $users = factory(User::class, 10)->create();
+        $users = factory(User::class, 10)->create(['group_id' => $group->id]);
 
         $response = $this->get('/users');
         $response->assertStatus(200);
@@ -27,13 +28,15 @@ class ApiTest extends TestCase
 
     public function testCreateAUser()
     {
+        $group = factory(Group::class)->create();
         $user = factory(User::class)->make();
 
         $response = $this->post('/users', [
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'state' => $user->state
+            'state' => $user->state,
+            'group_id' => $group->id
         ]);
 
         $response->assertJson(['status' => true]);
@@ -42,14 +45,16 @@ class ApiTest extends TestCase
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'state' => $user->state
+            'state' => $user->state,
+            'group_id' => $group->id
         ]);
     }
 
     public function testFetchOfAUser()
     {
+        $group = factory(Group::class)->create();
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = factory(User::class)->create(['group_id' => $group->id]);
 
         $response = $this->get('/users/' . $user->id);
 
@@ -61,14 +66,18 @@ class ApiTest extends TestCase
 
     public function testModifyUsersInfo()
     {
+        $group = factory(Group::class)->create();
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = factory(User::class)->create(['group_id' => $group->id]);
+
+        $new_group = factory(Group::class)->create();
 
         $request_data = [
             'first_name' => 'Test FN',
             'last_name' => 'Test LN',
             'email' => 'test@test.com',
-            'state' => !$user->state//change state
+            'state' => !$user->state,//change state,
+            'group_id' => $new_group->id
         ];
 
         $response = $this->put('/users/' . $user->id, $request_data);
@@ -79,7 +88,8 @@ class ApiTest extends TestCase
         $this->assertDatabaseHas('users', array_merge(['id' => $user->id], $request_data));
     }
 
-    public function testFetchListOfGroups() {
+    public function testFetchListOfGroups()
+    {
         /** @var Collection $groups */
         $groups = factory(Group::class, 10)->create();
 
