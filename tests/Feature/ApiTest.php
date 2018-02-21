@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Group;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
@@ -62,28 +63,60 @@ class ApiTest extends TestCase
     {
         /** @var User $user */
         $user = factory(User::class)->create();
-        $user->save([
+
+        $request_data = [
             'first_name' => 'Test FN',
             'last_name' => 'Test LN',
             'email' => 'test@test.com',
-        ]);
+            'state' => !$user->state//change state
+        ];
 
-        $response = $this->put('/users/' . $user->id, [
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'email' => $user->email,
-            'state' => $user->state
-        ]);
+        $response = $this->put('/users/' . $user->id, $request_data);
         $response->assertJson([
             'status' => true
         ]);
 
-        $this->assertDatabaseHas('users', [
-            'id' => $user->id,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'email' => $user->email,
-            'state' => $user->state
+        $this->assertDatabaseHas('users', array_merge(['id' => $user->id], $request_data));
+    }
+
+    public function testFetchListOfGroups() {
+        /** @var Collection $groups */
+        $groups = factory(Group::class, 10)->create();
+
+        $response = $this->get('/groups');
+        $response->assertJson([
+            'status' => true,
+            'groups' => $groups->toArray()
         ]);
+    }
+
+    public function testCreateAGroup()
+    {
+        /** @var Group $group */
+        $group = factory(Group::class)->make();
+
+        $response = $this->post('/groups', [
+            'name' => $group->name
+        ]);
+        $response->assertJson(['status' => true]);
+
+        $this->assertDatabaseHas('groups', [
+            'name' => $group->name
+        ]);
+    }
+
+    public function testModifyGroupInfo()
+    {
+        /** @var Group $group */
+        $group = factory(Group::class)->create();
+
+        $request_data = [
+            'name' => 'Test Group'
+        ];
+
+        $response = $this->put('/groups/' . $group->id, $request_data);
+        $response->assertJson(['status' => true]);
+
+        $this->assertDatabaseHas('groups', array_merge(['id' => $group->id], $request_data));
     }
 }
