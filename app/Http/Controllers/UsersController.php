@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateChangeUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -19,7 +20,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function postUsers(Request $request)
+    public function postUsers(CreateChangeUser $request)
     {
         try {
             $user = new User($request->post());
@@ -47,7 +48,7 @@ class UsersController extends Controller
         }
     }
 
-    public function putUsersById(Request $request, $user_id)
+    public function putUsersById(CreateChangeUser $request, $user_id)
     {
         try {
             /** @var User $user */

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateChangeGroup;
 use App\Models\Group;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
 
 class GroupsController extends Controller
 {
@@ -19,7 +19,7 @@ class GroupsController extends Controller
         ]);
     }
 
-    public function postGroups(Request $request)
+    public function postGroups(CreateChangeGroup $request)
     {
         try {
             $group = new Group($request->post());
@@ -31,7 +31,7 @@ class GroupsController extends Controller
         }
     }
 
-    public function putGroupsById(Request $request, $group_id)
+    public function putGroupsById(CreateChangeGroup $request, $group_id)
     {
         try {
             /** @var Group $group */
